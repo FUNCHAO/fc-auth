@@ -1,0 +1,25 @@
+#数据源
+spring:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/fc_test1_oauth?useUnicode=true
+    username: root
+    password:
+    # 配置Druid连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+  session:
+    store-type: none
+
+# Tomcat
+server:
+  port: 8070
+  connection-timeout: 5000ms
+
+#自定义权限配置
+fc:
+  auth:
+    browser:
+      loginPage: /fc-login.html # 这里可以配置成自己的非标准登录界面
+      loginType: JSON
+    imageCaptcha:
+      interceptImageUrl: /user/*,/pay/confirm # 这些路径验证码也要拦截校验
