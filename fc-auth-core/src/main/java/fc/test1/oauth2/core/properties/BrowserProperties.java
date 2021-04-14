@@ -6,7 +6,12 @@ public class BrowserProperties {
     /**
      * 登录页面 不配置默认标准登录界面
      */
-    private String loginPage = "/tiger-login.html";
+    private String loginPage = "/fc-login.html";
+    /**
+     * 记住我秒数
+     * @return
+     */
+    private int remberMeSeconds=3600;
     /**
      * 跳转类型 默认返回json数据
      */
@@ -27,5 +32,13 @@ public class BrowserProperties {
 
     public void setLoginType(LoginTypeEnum loginType) {
         this.loginType = loginType;
+    }
+
+    public int getRemberMeSeconds() {
+        return remberMeSeconds;
+    }
+
+    public void setRemberMeSeconds(int remberMeSeconds) {
+        this.remberMeSeconds = remberMeSeconds;
     }
 }
