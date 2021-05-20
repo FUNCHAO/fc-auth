@@ -53,6 +53,8 @@ public class BrowserRequireController {
                 redirectStrategy.sendRedirect(request, response, securityProperties.getBrowser().getLoginPage());
             }
         }
+        // fc add 认证有问题就跳转到登录，后续可以处理为根据手机端或web端分别跳转到不同页面
+        redirectStrategy.sendRedirect(request, response, securityProperties.getBrowser().getLoginPage());
         return "访问的服务需要身份认证，请引导用户到登录页面";
     }
 }

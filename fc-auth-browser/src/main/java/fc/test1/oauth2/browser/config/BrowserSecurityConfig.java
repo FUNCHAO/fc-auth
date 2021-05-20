@@ -2,6 +2,8 @@ package fc.test1.oauth2.browser.config;
 
 import fc.test1.oauth2.core.authentication.FcAuthenticationFailureHandler;
 import fc.test1.oauth2.core.authentication.FcAuthenticationSuccessHandler;
+import fc.test1.oauth2.core.authentication.mobile.SmsAuthenticationSecurityConfig;
+import fc.test1.oauth2.core.authentication.mobile.SmsCaptchaFilter;
 import fc.test1.oauth2.core.captcha.filter.CaptchaFilter;
 import fc.test1.oauth2.core.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     private DataSource dataSource;
     @Autowired
     private UserDetailsService myUserDetailServiceImpl;
+    @Autowired
+    private SmsAuthenticationSecurityConfig smsAuthenticationSecurityConfig;//短信登陆配置
 
     /**
      * 密码加密解密
@@ -49,12 +53,18 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         captchaFilter.setFailureHandler(fcAuthenticationFailureHandler);
         captchaFilter.setSecurityProperties(securityProperties);
         captchaFilter.afterPropertiesSet();
+        //短信验证码的配置
+        SmsCaptchaFilter smsCaptchaFilter = new SmsCaptchaFilter();
+        smsCaptchaFilter.setFailureHandler(fcAuthenticationFailureHandler);
+        smsCaptchaFilter.setSecurityProperties(securityProperties);
+        smsCaptchaFilter.afterPropertiesSet();
         //图片验证码放在认证之前
-        http.addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
+        http.addFilterBefore(smsCaptchaFilter,UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin()
                 .loginPage("/authentication/require")//自定义登录请求
-//                .loginPage(securityProperties.getBrowser().getLoginPage())//自定义登录请求
                  .loginProcessingUrl("/authentication/form")//自定义登录表单请求
+//                .loginPage(securityProperties.getBrowser().getLoginPage())//自定义登录请求
                 .successHandler(fcAuthenticationSuccessHandler)
                 .failureHandler(fcAuthenticationFailureHandler)
                 .and()
@@ -66,12 +76,14 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(securityProperties.getBrowser().getLoginPage(),
-                        "/authentication/require", "/captcha/image")//此路径放行 否则会陷入死循环
+                        "/authentication/require","/captcha/*")//此路径放行 否则会陷入死循环
                 .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .csrf().disable()//跨域关闭
+                //短信登陆配置挂载
+                .apply(smsAuthenticationSecurityConfig)
         ;
     }
 

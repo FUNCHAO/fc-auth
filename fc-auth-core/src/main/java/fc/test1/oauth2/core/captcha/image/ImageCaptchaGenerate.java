@@ -1,13 +1,14 @@
-package fc.test1.oauth2.core.captcha.service;
+package fc.test1.oauth2.core.captcha.image;
 
 import com.google.code.kaptcha.Producer;
-import fc.test1.oauth2.core.captcha.ImageCaptchaVo;
+import fc.test1.oauth2.core.captcha.entity.ImageCaptchaVo;
+import fc.test1.oauth2.core.captcha.service.CaptchaGenerate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
 @Service
-public class ImageCaptchaGenerate implements ICaptchaGenerate {
+public class ImageCaptchaGenerate implements CaptchaGenerate {
     @Autowired
     private Producer producer;//config bean中配置
 
